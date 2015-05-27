@@ -1,0 +1,13 @@
+#
+# Common custom configuration
+#
+
+alias gclean='git reset --hard && git clean -df'
+alias gnuke='git reset --hard && git clean -dfx'
+
+
+#
+# Command history configuration
+#
+
+unsetopt share_history

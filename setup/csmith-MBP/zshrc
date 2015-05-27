@@ -1,0 +1,45 @@
+# User configuration
+DEFAULT_USER=csmith
+
+#
+# GIT
+#
+export GITHUB_USERNAME='chrisfsmith'
+export BLOOM_GIT_SANDBOX='/Users/csmith/dev/projects/bloom'
+
+
+#
+# Source bloom-dev-scripts
+#
+. $BLOOM_GIT_SANDBOX/dev_scripts/bash/bloom-plugins.sh
+. $BLOOM_GIT_SANDBOX/dev_scripts/bash/gradle.sh
+. $BLOOM_GIT_SANDBOX/dev_scripts/bash/groovy-grails.sh
+. $BLOOM_GIT_SANDBOX/dev_scripts/bash/java-home.sh
+. $BLOOM_GIT_SANDBOX/dev_scripts/bash/vagrant.sh
+
+
+#
+# Aliases
+#
+alias cdbloom='cd $BLOOM_GIT_SANDBOX/'
+alias cdgpa='cd $BLOOM_GIT_SANDBOX/webapp_bloomhealth/bloomhealth'
+alias cdbb='cd $BLOOM_GIT_SANDBOX/webapp_bhbo/bhbo'
+alias cdbh='cd $BLOOM_GIT_SANDBOX/bloomhealth'
+alias cdvm='cd $BLOOM_GIT_SANDBOX/provisioning/vagrant/vagrantmanager'
+
+#
+# mysql
+#
+export MYSQL_HOME=/usr/local/Cellar/mysql55/5.5.40
+export PATH=$PATH:$MYSQL_HOME/bin
+
+alias mysqlstart="mysql.server start"
+alias mysqlstop="mysql.server stop"
+
+export PATH=~/bin:/usr/local/bin:$PATH:/usr/local/sbin
+# export MANPATH="/usr/local/man:$MANPATH"
+
+#
+# Java
+#
+java7
