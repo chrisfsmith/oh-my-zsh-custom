@@ -1,0 +1,57 @@
+# export GRAILS_OPTS="-Djava.awt.headless=true -Xms1G -Xmx2G -XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC"
+
+
+# Grails - Interactive Mode
+function g-ia() {
+    grails -Duser.timezone=UTC interactive
+}
+
+# Grails - clean, compile & package
+function g-ccp() {
+    grails clean && grails compile --non-interactive && grails package --non-interactive
+}
+
+# Grails - Run unit tests
+function g-tau() {
+    grails -Duser.timezone=UTC test-app unit: $*
+}
+
+# Grails - Re-run failed unit tests
+function g-taurr() {
+    grails -Duser.timezone=UTC test-app -rerun unit: $*
+}
+
+# Grails - Run integration tests
+function g-tai() {
+    grails -Duser.timezone=UTC test-app integration: $*
+}
+
+# Grails - Re-run failed integration tests
+function g-tairr() {
+    grails -Duser.timezone=UTC test-app -rerun integration: $*
+}
+
+# Grails - Run fitness tests
+function g-tafit() {
+    grails -Duser.timezone=UTC test-app fitnesse: $*
+}
+
+# Grails - Run functional tests
+function g-tafun() {
+    grails -Duser.timezone=UTC test-app -onlyFunctional $*
+}
+
+function g-finduses() {
+    if [ "$1" == "" ]; then
+        echo "usage: $0 classOrFunctionName"
+    else
+        echo -e "grails-app:\n==========="
+        grep --include '*.groovy' --include '*.gsp' -rE "\<$1\>" grails-app/
+        echo -e "web-app:\n==========="
+        grep --include '*.js' -rE "\<$1\>" web-app/
+        echo -e "\nsrc:\n==========="
+        grep --include '*.groovy' -rE "\<$1\>" src/
+        echo -e "\ntest:\n==========="
+        grep --include '*.groovy' -rE "\<$1\>" test/
+    fi
+}

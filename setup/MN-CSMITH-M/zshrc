@@ -1,0 +1,60 @@
+# User configuration
+
+export ST_ENV=local
+
+export ST_GIT_SANDBOX=~/dev/smartthings
+export COM_GIT_SANDBOX=~/dev/community
+
+
+#
+# Grails
+#
+source $ZSHSETUP/$HOSTNAME/grails
+
+
+#
+# NVM
+#
+export NVM_DIR="$HOME/.nvm"
+[[ -s "$(brew --prefix nvm)/nvm.sh" ]] && source "$(brew --prefix nvm)/nvm.sh"
+
+
+#
+# Cassandra
+#
+export CASSANDRA_BIN=/usr/local/cassandra/bin/
+
+#
+# AWS
+#
+alias awspreprod='export AWS_PROFILE=st-preprod'
+alias awsprod='export AWS_PROFILE=default'
+
+
+#
+# Aliases
+#
+alias cdst='cd $ST_GIT_SANDBOX/'
+alias cddm='cd $ST_GIT_SANDBOX/data-management'
+alias cdcc='cd $ST_GIT_SANDBOX/client-connectivity'
+alias cddc='cd $ST_GIT_SANDBOX/device-connectivity'
+alias cdan='cd $ST_GIT_SANDBOX/provisioning/ansible'
+alias cdtr='cd $ST_GIT_SANDBOX/ticker'
+
+alias cdcom='cd $COM_GIT_SANDBOX'
+alias cdpri='cd $COM_GIT_SANDBOX/SmartThingsPrivate'
+
+alias gw-c='./gradlew clean'
+alias gw-ca='./gradlew clean assemble'
+
+#
+# PATH
+#
+export PATH=~/bin:/usr/local/bin:$PATH:/usr/local/sbin
+
+
+#
+# Java
+#
+export JAVA_OPTS="-Djava.awt.headless=true -Xms1G -Xmx2G -XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC"
+java7

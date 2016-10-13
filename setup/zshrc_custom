@@ -2,12 +2,28 @@
 # Common custom configuration
 #
 
+#
+# Aliases
+#
 alias gclean='git reset --hard && git clean -df'
 alias gnuke='git reset --hard && git clean -dfx'
 
+alias bb=bbedit
+
+#
+# Java versions
+#
+export JAVA_HOME=`/usr/libexec/java_home`
+
+function java7() {
+    export JAVA_HOME=`/usr/libexec/java_home -v 1.7`
+}
+
+function java8() {
+    export JAVA_HOME=`/usr/libexec/java_home -v 1.8`
+}
 
 #
 # Command history configuration
 #
-
 unsetopt share_history
