@@ -1,0 +1,18 @@
+# User configuration
+
+#
+# GIT
+#
+export GITHUB_USERNAME='chrisfsmith'
+
+
+#
+# Aliases
+#
+
+
+#
+# Path
+#
+export PATH=~/bin:/usr/local/bin:$PATH:/usr/local/sbin
+# export MANPATH="/usr/local/man:$MANPATH"
