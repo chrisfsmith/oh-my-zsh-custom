@@ -56,5 +56,14 @@ export PATH=~/bin:/usr/local/bin:$PATH:/usr/local/sbin
 #
 # Java
 #
-export JAVA_OPTS="-Djava.awt.headless=true -Xms1G -Xmx2G -XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC"
+function java7() {
+	export JAVA_HOME=`/usr/libexec/java_home -v 1.7`
+	export JAVA_OPTS="-Djava.awt.headless=true -Xms1G -Xmx2G -XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC"
+}
+
+function java8() {
+	export JAVA_HOME=`/usr/libexec/java_home -v 1.8`
+	export JAVA_OPTS="-Djava.awt.headless=true -Xms1G -Xmx2G -XX:+UseConcMarkSweepGC"
+}
+
 java7
