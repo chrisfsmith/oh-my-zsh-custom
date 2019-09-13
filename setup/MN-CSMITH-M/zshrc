@@ -1,4 +1,6 @@
+#
 # User configuration
+#
 export EDITOR='subl -w'
 
 export ST_ENV=local
@@ -26,6 +28,7 @@ export NVM_DIR="$HOME/.nvm"
 #
 export CASSANDRA_BIN=/usr/local/bin
 
+
 #
 # AWS
 #
@@ -38,49 +41,6 @@ alias awsassume-prod='export AWS_PROFILE=STProductionReadOnly'
 
 alias awsassume-cn='export AWS_PROFILE=STPreprodCNPowerUser'
 alias awsassume-cn-prod='export AWS_PROFILE=STProductionCNPowerUser'
-
-#alias awsidentity='export AWS_PROFILE=st-identity'
-#alias awsenv='source ~/aws_env.sh'
-
-#function awsassume() {
-#  aws sts assume-role --role-arn arn:aws:iam::344541377886:role/ident-smartthings_preprod-power_user --role-session-name "Pre-Prod" --profile "st-identity" > ~/assume-preprod-output.txt
-#  export AWS_ACCESS_KEY_ID=`cat ~/assume-preprod-output.txt | jq -c '.Credentials.AccessKeyId' | tr -d '"' | tr -d ' '`
-#  export AWS_SECRET_ACCESS_KEY=`cat ~/assume-preprod-output.txt | jq -c '.Credentials.SecretAccessKey' | tr -d '"' | tr -d ' '`
-#  export AWS_SESSION_TOKEN=`cat ~/assume-preprod-output.txt | jq -c '.Credentials.SessionToken' | tr -d '"' | tr -d ' '`
-#  rm ~/assume-preprod-output.txt
-#}
-
-#function awsassume_acceptance() {
-#  aws sts assume-role --role-arn arn:aws:iam::817686556960:role/ident-smartthings_acceptance-read_only --role-session-name "Acceptance-Read-Only" --profile "st-identity" > ~/assume-acceptance-output.txt
-#  export AWS_ACCESS_KEY_ID=`cat ~/assume-acceptance-output.txt | jq -c '.Credentials.AccessKeyId' | tr -d '"' | tr -d ' '`
-#  export AWS_SECRET_ACCESS_KEY=`cat ~/assume-acceptance-output.txt | jq -c '.Credentials.SecretAccessKey' | tr -d '"' | tr -d ' '`
-#  export AWS_SESSION_TOKEN=`cat ~/assume-acceptance-output.txt | jq -c '.Credentials.SessionToken' | tr -d '"' | tr -d ' '`
-#  rm ~/assume-acceptance-output.txt
-#}
-
-#function awsassume_prod() {
-#  aws sts assume-role --role-arn arn:aws:iam::747017778629:role/ident-smartthings_production-read_only --role-session-name "Prod" --profile "st-identity" > ~/assume-prod-output.txt
-#  export AWS_ACCESS_KEY_ID=`cat ~/assume-prod-output.txt | jq -c '.Credentials.AccessKeyId' | tr -d '"' | tr -d ' '`
-#  export AWS_SECRET_ACCESS_KEY=`cat ~/assume-prod-output.txt | jq -c '.Credentials.SecretAccessKey' | tr -d '"' | tr -d ' '`
-#  export AWS_SESSION_TOKEN=`cat ~/assume-prod-output.txt | jq -c '.Credentials.SessionToken' | tr -d '"' | tr -d ' '`
-#  rm ~/assume-prod-output.txt
-#}
-
-#function awsassume_cn() {
-#  aws sts assume-role --role-arn arn:aws-cn:iam::787755417206:role/ident-smartthings_preprod_cn-power_user --role-session-name "Pre-Prod-Cn" --profile "st-identity-cn" > ~/assume-preprod-cn-output.txt
-#  export AWS_ACCESS_KEY_ID=`cat ~/assume-preprod-cn-output.txt | jq -c '.Credentials.AccessKeyId' | tr -d '"' | tr -d ' '`
-#  export AWS_SECRET_ACCESS_KEY=`cat ~/assume-preprod-cn-output.txt | jq -c '.Credentials.SecretAccessKey' | tr -d '"' | tr -d ' '`
-#  export AWS_SESSION_TOKEN=`cat ~/assume-preprod-cn-output.txt | jq -c '.Credentials.SessionToken' | tr -d '"' | tr -d ' '`
-#  rm ~/assume-preprod-cn-output.txt
-#}
-
-#function awsassume_prod_cn() {
-#  aws sts assume-role --role-arn arn:aws-cn:iam::817867943085:role/ident-smartthings_production_cn-power_user --role-session-name "Prod-Cn" --profile "st-identity-cn" > ~/assume-prod-cn-output.txt
-#  export AWS_ACCESS_KEY_ID=`cat ~/assume-prod-cn-output.txt | jq -c '.Credentials.AccessKeyId' | tr -d '"' | tr -d ' '`
-#  export AWS_SECRET_ACCESS_KEY=`cat ~/assume-prod-cn-output.txt | jq -c '.Credentials.SecretAccessKey' | tr -d '"' | tr -d ' '`
-#  export AWS_SESSION_TOKEN=`cat ~/assume-prod-cn-output.txt | jq -c '.Credentials.SessionToken' | tr -d '"' | tr -d ' '`
-#  rm ~/assume-prod-cn-output.txt
-#}
 
 function lg {
   list_instances_osx --json | jq '[.[] | select(.name | contains("'$1'")) | {id: .id, name: .name, ip: .privateIp}]'
@@ -108,9 +68,8 @@ function buildinfo() {
     buildinfo_verbose $* | jq '[.[] | {name: .serverGroupName, environment: .serverGroupEnvironment, version: .buildInfoVersion }]'
 }
 
-#awsenv
-#awspreprod
 awsassume
+
 
 #
 # Aliases
@@ -138,18 +97,19 @@ alias gw-cacp='./gradlew clean assemble checkProjects'
 alias gw-r='./gradlew run'
 alias gw-rd='./gradlew run  --debug-jvm'
 
+
 #
 # Android Studio
 #
 export ANDROID_HOME=/Users/$USER/Library/Android/sdk
 export PATH=${PATH}:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
 
+
 #
 # PATH
 #
 export PATH=/usr/local/opt/cassandra@2.1/bin:~/bin:/usr/local/bin:$PATH:/usr/local/sbin
 
-# fpath=($HOME/dev/personal/gradle-completion $fpath)
 
 #
 # Java
@@ -166,10 +126,3 @@ function java8() {
 
 # java8
 
-#
-# iterm2 specific features
-#
-#source ~/.iterm2_shell_integration.zsh
-#iterm2_print_user_vars() {
-#  iterm2_set_user_var gitRepo $(basename `git rev-parse --show-toplevel 2> /dev/null` 2> /dev/null) || return
-#}
