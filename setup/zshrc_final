@@ -2,6 +2,11 @@
 # Stuff that needs to be at the end of setup
 #
 
+# Source chtf
+if [[ -f /usr/local/opt/chtf/share/chtf/chtf.sh ]]; then
+  source "/usr/local/opt/chtf/share/chtf/chtf.sh"
+fi
+    
 # RVM setup
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
 

@@ -1,4 +1,5 @@
 # export GRAILS_OPTS="-Djava.awt.headless=true -Xms1G -Xmx2G -XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC"
+export GRAILS_OPTS="-Dnet.spy.log.LoggerImpl=net.spy.memcached.compat.log.SunLogger"
 
 
 # Grails - Interactive Mode
