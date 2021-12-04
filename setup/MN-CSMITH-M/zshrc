@@ -8,6 +8,7 @@ export ST_ENV=local
 export ST_GIT_SANDBOX=~/dev/smartthings
 export COM_GIT_SANDBOX=~/dev/community
 export GITLAB_SANDBOX=~/dev/gitlab
+export IOT_SANDBOX=~/dev/iot
 
 
 #
@@ -28,6 +29,29 @@ export NVM_DIR="$HOME/.nvm"
 #
 export CASSANDRA_BIN=/usr/local/bin
 
+#
+# teleport
+#
+export TELEPORT_LOGIN=ubuntu
+
+alias t-ssh='tsh ssh'
+alias t-ls='tsh ls'
+
+function t-lsd() {
+  t-ls app=$1,environment=dev
+}
+
+function t-lss() {
+  t-ls app=$1,environment=staging
+}
+
+function t-lsa() {
+  t-ls app=$1,environment=acceptance
+}
+
+function t-lsp() {
+  t-ls app=$1,environment=production
+}
 
 #
 # AWS
@@ -40,7 +64,11 @@ alias awsassume-acceptance='export AWS_PROFILE=STAcceptanceReadOnly'
 alias awsassume-prod='export AWS_PROFILE=STProductionReadOnly'
 
 alias awsassume-cn='export AWS_PROFILE=STPreprodCNPowerUser'
-alias awsassume-cn-prod='export AWS_PROFILE=STProductionCNPowerUser'
+#alias awsassume-cn-prod='export AWS_PROFILE=STProductionCNPowerUser'
+alias awsassume-cn-prod='export AWS_PROFILE=STProductionCNEXE'
+
+alias awsclear='unset AWS_PROFILE AWS_REGION AWS_DEFAULT_REGION'
+
 
 function lg {
   list_instances_osx --json | jq '[.[] | select(.name | contains("'$1'")) | {id: .id, name: .name, ip: .privateIp}]'
@@ -50,25 +78,53 @@ function lg-cn {
   list_instances_osx --region=cn-north-1 --json | jq '[.[] | select(.name | contains("'$1'")) | {id: .id, name: .name, ip: .privateIp}]'
 }
 
+source ~/northstar_env.sh
+
 function buildinfo_verbose() {
-    if [ -n "$2" ]
-    then
-      query="[.[] | select(.serverGroupEnvironment | contains(\"$2\"))]"
-    else
-      query="."
-    fi 
-    local OUTPUT=$(curl -sX GET https://northstar.streleng.com/app/$1 \
-      -H 'x-ec2-instance-document: <document>' \
-      -H 'x-ec2-instance-signature: <signature>'
-    )
-    echo "$OUTPUT" | jq $query
+  if [ -n "$2" ]
+  then
+    query="[.[] | select(.serverGroupEnvironment | contains(\"$2\"))]"
+  else
+    query="."
+  fi 
+  local OUTPUT=$(curl -sX GET https://northstar.streleng.com/app/$1 \
+    -H "x-ec2-instance-document: $NORTHSTAR_DOC" \
+    -H "x-ec2-instance-signature: $NORTHSTAR_SIG"
+  )
+  echo "$OUTPUT" | jq $query
 }
 
 function buildinfo() {
-    buildinfo_verbose $* | jq '[.[] | {name: .serverGroupName, environment: .serverGroupEnvironment, version: .buildInfoVersion }]'
+#  buildinfo_verbose $* | jq '[.[] | {name: .serverGroupName, environment: .serverGroupEnvironment, version: .buildInfoVersion, appSHA: .buildInfoAppSha, provisioningSHA: .buildInfoProvisioningSha }]'
+  buildinfo_verbose $* | jq '[.[] | {name: .serverGroupName, environment: .serverGroupEnvironment, version: .buildInfoVersion }]'
 }
 
-awsassume
+## Fuzzy Finder Auto Completion
+
+FZF_SHELL="/usr/local/opt/fzf/shell"
+
+if [[ -d "$FZF_SHELL" ]]; then
+
+  jqpath_cmd='
+  def path_str: [.[] | if (type == "string") then "." + . else "[" + (. | tostring) + "]" end] | add; 
+
+    . as $orig |
+      paths(scalars) as $paths |
+      $paths |
+      . as $path |
+      $orig |
+      [($path | path_str), "\u00a0", (getpath($path) | tostring)] |
+      add
+  '
+
+  # pipe json in to use fzf to search through it for jq paths, uses a non-breaking space as an fzf column delimiter
+  alias jqpath="jq -rc '$jqpath_cmd' | cat <(echo $'PATH\u00a0VALUE') - | column -t -s $'\u00a0' | fzf +s -m --header-lines=1"
+ 
+else
+  echo "missing fzf: brew install fzf jq"
+fi
+
+# awsassume
 
 
 #
@@ -78,16 +134,21 @@ alias cdst='cd $ST_GIT_SANDBOX/'
 alias cddm='cd $ST_GIT_SANDBOX/data-management'
 alias cdcc='cd $ST_GIT_SANDBOX/client-connectivity'
 alias cddc='cd $ST_GIT_SANDBOX/device-connectivity'
-alias cdan='cd $ST_GIT_SANDBOX/provisioning/ansible'
-alias cdtr='cd $ST_GIT_SANDBOX/ticker'
+
+alias cdiot='cd $IOT_SANDBOX'
+alias cdbouncer='cd $IOT_SANDBOX/bouncer'
+alias cdflexo='cd $IOT_SANDBOX/flexo'
+alias cdlibrarian='cd $IOT_SANDBOX/librarian'
+alias cdloon='cd $IOT_SANDBOX/loon'
+alias cdnile='cd $IOT_SANDBOX/nile'
+alias cdpaperboy='cd $IOT_SANDBOX/paperboy'
+alias cdpigeon='cd $IOT_SANDBOX/pigeon'
+alias cdpusher='cd $IOT_SANDBOX/pusher'
+alias cdspigot='cd $IOT_SANDBOX/spigot'
+alias cdticker='cd $IOT_SANDBOX/ticker'
 
 alias cdcom='cd $COM_GIT_SANDBOX'
 alias cdpri='cd $COM_GIT_SANDBOX/SmartThingsPrivate'
-
-alias cdmiranda='cd $GITLAB_SANDBOX/miranda'
-alias cdreaver='cd $GITLAB_SANDBOX/reaver'
-alias cdrule-proxy='cd $GITLAB_SANDBOX/rule-proxy'
-alias cdserenity='cd $GITLAB_SANDBOX/serenity'
 
 alias gw-br='./gradlew bootRun'
 alias gw-c='./gradlew clean'
@@ -97,32 +158,46 @@ alias gw-cacp='./gradlew clean assemble checkProjects'
 alias gw-r='./gradlew run'
 alias gw-rd='./gradlew run  --debug-jvm'
 
+alias bbj='bbedit --clean -m JSON'
+
+# docker
+alias dc="docker compose"
+
+function drma() {
+  ## docker remove all containers
+  [[ -z $(docker ps -aq) ]] || docker rm -f $(docker ps -aq)
+}
 
 #
 # Android Studio
 #
-export ANDROID_HOME=/Users/$USER/Library/Android/sdk
-export PATH=${PATH}:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+export ANDROID_HOME={PATH_TO_HOME}/Library/Android/sdk
+export ANDROID_STUDIO=/Applications/Android\ Studio.app/Contents/MacOS/
+
+export PATH=${PATH}:${ANDROID_STUDIO}
+export PATH=$PATH:${ANDROID_HOME}/platform-tools
+export PATH=$PATH:${ANDROID_HOME}/tools
 
 
 #
 # PATH
 #
-export PATH=/usr/local/opt/cassandra@2.1/bin:~/bin:/usr/local/bin:$PATH:/usr/local/sbin
+export PATH=/usr/local/opt/cassandra@2.1/bin:~/bin:/usr/local/bin:$PATH:/usr/local/sbin:$HOME/.cargo/bin
 
 
 #
 # Java
 #
-function java7() {
-	export JAVA_HOME=`/usr/libexec/java_home -v 1.7`
-	export JAVA_OPTS="-Djava.awt.headless=true -Xms1G -Xmx2G -XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC"
-}
+#function java7() {
+#  export JAVA_HOME=`/usr/libexec/java_home -v 1.7`
+#  export JAVA_OPTS="-Djava.awt.headless=true -Xms1G -Xmx2G -XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC"
+#}
 
-function java8() {
-	export JAVA_HOME=`/usr/libexec/java_home -v 1.8`
-	export JAVA_OPTS="-Djava.awt.headless=true -Xms1G -Xmx2G -XX:+UseConcMarkSweepGC"
-}
+#function java8() {
+#  export JAVA_HOME=`/usr/libexec/java_home -v 1.8`
+#  export JAVA_OPTS="-Djava.awt.headless=true -Xms1G -Xmx2G -XX:+UseConcMarkSweepGC"
+#}
 
-# java8
+alias java8='sdk use java 8.0.265-zulu'
+alias java11='sdk use java 11.0.2-open'
 
